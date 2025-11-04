@@ -3,6 +3,7 @@ package com.example.primerintentodeaplicacionsolo
 import android.R.attr.label
 import android.R.attr.onClick
 import android.R.attr.text
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -59,6 +60,7 @@ data class Gasto(
     val monto: Double
 )
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     var totalGastos by remember { mutableStateOf(0.0) }
@@ -83,23 +85,26 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Total: $${totalGastos}",
+            text = "Total: $${String.format("%.2f", totalGastos)}",
             fontSize = 24.sp
-
-        )
-
-        OutlinedTextField(
-            value = descripcionActual,
-            onValueChange = { descripcionActual = it },
-            label = { Text("Descripción del gasto") },
-            modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = montoActual,
             onValueChange = { montoActual = it },
             label = { Text("Monto del gasto") },
+            placeholder = { Text("150.50") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = descripcionActual,
+            onValueChange = { descripcionActual = it },
+            label = { Text("Descripción del gasto") },
+            placeholder = { Text("Ej: Supermercado, Transporte, Gym...") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -131,7 +136,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         LazyColumn {
             items(listaGastos.size) { index ->
                 Text(
-                    text = "${index + 1}. ${listaGastos[index].descripcion} - $${listaGastos[index].monto}",
+                    text = "${index + 1}. ${listaGastos[index].descripcion} - $${
+                        String.format(
+                            "%.2f",
+                            listaGastos[index].monto
+                        )
+                    }",
                     fontSize = 16.sp,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
