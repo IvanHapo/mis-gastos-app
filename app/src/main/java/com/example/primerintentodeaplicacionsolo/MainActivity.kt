@@ -54,11 +54,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+data class Gasto(
+    val descripcion: String,
+    val monto: Double
+)
+
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     var totalGastos by remember { mutableStateOf(0.0) }
     var montoActual by remember { mutableStateOf("") }
-    var listaGastos by remember { mutableStateOf(listOf<Double>()) }
+    var descripcionActual by remember { mutableStateOf("") }
+    var listaGastos by remember { mutableStateOf(listOf<Gasto>()) }
 
     Column(
         modifier = modifier
@@ -83,6 +89,13 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
 
         OutlinedTextField(
+            value = descripcionActual,
+            onValueChange = { descripcionActual = it },
+            label = { Text("Descripción del gasto") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
             value = montoActual,
             onValueChange = { montoActual = it },
             label = { Text("Monto del gasto") },
@@ -94,10 +107,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
         Button(onClick = {
             val monto = montoActual.toDoubleOrNull()
-            if (monto != null && monto > 0) {
+            if (monto != null && monto > 0 && descripcionActual.isNotBlank()) {
+                val nuevoGasto = Gasto(descripcionActual, monto)
+                listaGastos = listaGastos + nuevoGasto
                 totalGastos += monto
-                listaGastos = listaGastos + monto
                 montoActual = ""
+                descripcionActual = ""
             }
         }) {
             Text("Agregar Gasto")
@@ -116,7 +131,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         LazyColumn {
             items(listaGastos.size) { index ->
                 Text(
-                    text = "${index + 1}. $${listaGastos[index]}",
+                    text = "${index + 1}. ${listaGastos[index].descripcion} - $${listaGastos[index].monto}",
                     fontSize = 16.sp,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
@@ -127,9 +142,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Button(
             onClick = {
                 totalGastos = 0.0
-                listaGastos = listOf<Double>()
+                listaGastos = listOf<Gasto>()
             }
-        ){
+        ) {
             Text("Limpiar Todo")
         }
     }
