@@ -23,20 +23,24 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primerintentodeaplicacionsolo.ui.theme.PrimerIntentoDeAplicacionSoloTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,10 +67,21 @@ data class Gasto(
 @SuppressLint("DefaultLocale")
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val dataStore = remember { GastosDataStore(context) }
+    val scope = rememberCoroutineScope()
+
     var totalGastos by remember { mutableStateOf(0.0) }
     var montoActual by remember { mutableStateOf("") }
     var descripcionActual by remember { mutableStateOf("") }
     var listaGastos by remember { mutableStateOf(listOf<Gasto>()) }
+
+    LaunchedEffect(Unit) {
+        dataStore.gastosFlow.collect { gastosGuardados ->
+            listaGastos = gastosGuardados
+            totalGastos = gastosGuardados.sumOf { it.monto }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -118,6 +133,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                 totalGastos += monto
                 montoActual = ""
                 descripcionActual = ""
+
+                scope.launch {
+                    dataStore.guardarGastos(listaGastos)
+                }
             }
         }) {
             Text("Agregar Gasto")
@@ -153,6 +172,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             onClick = {
                 totalGastos = 0.0
                 listaGastos = listOf<Gasto>()
+
+                scope.launch {
+                    dataStore.guardarGastos(listOf())
+                }
             }
         ) {
             Text("Limpiar Todo")
