@@ -5,11 +5,13 @@ import android.R.attr.onClick
 import android.R.attr.text
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log.i
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +20,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -154,18 +160,42 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
         LazyColumn {
             items(listaGastos.size) { index ->
-                Text(
-                    text = "${index + 1}. ${listaGastos[index].descripcion} - $${
-                        String.format(
-                            "%.2f",
-                            listaGastos[index].monto
-                        )
-                    }",
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 )
+                {
+                    Text(
+                        text = "${index + 1}. ${listaGastos[index].descripcion} - $${
+                            String.format(
+                                "%.2f",
+                                listaGastos[index].monto
+                            )
+                        }",
+                        fontSize = 16.sp
+                    )
+
+                    IconButton(onClick = {
+                        listaGastos = listaGastos.filterIndexed { i, _ -> i != index }
+                        totalGastos = listaGastos.sumOf { it.monto }
+
+                        scope.launch {
+                            dataStore.guardarGastos(listaGastos)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Eliminar gasto",
+                            tint = Color.Red
+                        )
+                    }
+                }
             }
         }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
