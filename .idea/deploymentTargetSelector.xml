@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-10-31T21:16:06.772577900Z">
+        <DropdownSelection timestamp="2025-11-06T11:49:01.516147500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\ROG STRIX G16\.android\avd\Pixel_4.avd" />

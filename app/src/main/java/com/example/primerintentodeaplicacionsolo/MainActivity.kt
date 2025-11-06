@@ -9,6 +9,7 @@ import android.util.Log.i
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,9 +24,12 @@ import androidx.compose.foundation.text.input.InputTransformation.Companion.keyb
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,6 +96,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(Color(0xFF121212))
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -100,14 +105,16 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Text(
             text = "Mis Gastos",
             fontSize = 32.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.White
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "Total: $${String.format("%.2f", totalGastos)}",
-            fontSize = 24.sp
+            fontSize = 24.sp,
+            color = Color.White
         )
 
         OutlinedTextField(
@@ -116,7 +123,16 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             label = { Text("Monto del gasto") },
             placeholder = { Text("150.50") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color(0xFF4CAF50),
+                unfocusedBorderColor = Color.Gray,
+                focusedLabelColor = Color(0xFF4CAF50),
+                unfocusedLabelColor = Color.Gray,
+                cursorColor = Color(0xFF4CAF50)
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -126,7 +142,16 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             onValueChange = { descripcionActual = it },
             label = { Text("Descripción del gasto") },
             placeholder = { Text("Ej: Supermercado, Transporte, Gym...") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color(0xFF4CAF50),
+                unfocusedBorderColor = Color.Gray,
+                focusedLabelColor = Color(0xFF4CAF50),
+                unfocusedLabelColor = Color.Gray,
+                cursorColor = Color(0xFF4CAF50)
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -145,7 +170,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                 }
             }
         }) {
-            Text("Agregar Gasto")
+            Text("Agregar gasto")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -153,44 +178,64 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Text(
             text = "Historial de Gastos: ",
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.White
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
             items(listaGastos.size) { index ->
-                Row(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                )
-                {
-                    Text(
-                        text = "${index + 1}. ${listaGastos[index].descripcion} - $${
-                            String.format(
-                                "%.2f",
-                                listaGastos[index].monto
-                            )
-                        }",
-                        fontSize = 16.sp
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF1E1E1E)
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 5.dp
                     )
-
-                    IconButton(onClick = {
-                        listaGastos = listaGastos.filterIndexed { i, _ -> i != index }
-                        totalGastos = listaGastos.sumOf { it.monto }
-
-                        scope.launch {
-                            dataStore.guardarGastos(listaGastos)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    )
+                    {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = listaGastos[index].descripcion,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White
+                            )
+                            Text(
+                                text = "$${String.format("%.2f", listaGastos[index].monto)}",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White
+                            )
                         }
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Eliminar gasto",
-                            tint = Color.Red
-                        )
+
+                        IconButton(onClick = {
+                            listaGastos = listaGastos.filterIndexed { i, _ -> i != index }
+                            totalGastos = listaGastos.sumOf { it.monto }
+
+                            scope.launch {
+                                dataStore.guardarGastos(listaGastos)
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Eliminar gasto",
+                                tint = Color.Red
+                            )
+                        }
                     }
                 }
             }
@@ -208,7 +253,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                 }
             }
         ) {
-            Text("Limpiar Todo")
+            Text("Eliminar todo")
         }
     }
 }
