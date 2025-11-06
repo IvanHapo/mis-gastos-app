@@ -4,29 +4,31 @@ Aplicación Android para trackear gastos diarios, desarrollada con Jetpack Compo
 
 ## 📱 Funcionalidades
 
-- ✅ Agregar gastos con validación de entrada
+- ✅ Agregar gastos con descripción y monto
+- ✅ Validación de entrada (monto positivo y descripción obligatoria)
 - ✅ Visualizar total acumulado en tiempo real
-- ✅ Lista completa de todos los gastos
-- ✅ Botón para limpiar historial
-- ✅ Interfaz moderna con Jetpack Compose
+- ✅ Lista completa de todos los gastos con diseño moderno
+- ✅ Eliminar gastos individuales
+- ✅ Limpiar historial completo
+- ✅ **Persistencia de datos** - Los gastos se guardan permanentemente
+- ✅ Tema oscuro con Material Design
+- ✅ Interfaz moderna con Cards y elevación
 
 ## 🛠️ Tecnologías
 
 - **Kotlin**
 - **Jetpack Compose**
 - **Material Design 3**
-- **Estado reactivo con `remember` y `mutableStateOf`**
 
 ## 🚀 En desarrollo
 
-- [ ] Agregar descripción a cada gasto
-- [ ] Implementar categorías
-- [ ] Persistencia de datos con DataStore
-- [ ] Borrar gastos individuales
+- [ ] Categorías de gastos (comida, transporte, etc.)
+- [ ] Filtros por fecha
+- [ ] Gráficos de gastos por categoría
 
 ## 📸 Screenshots
 
-_(Próximamente)_
+<img src="screenshot.png" width="300" alt="App de Gastos - Tema Oscuro"/>
 
 ## 🎯 Objetivo
 
